@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>audio record</title>
+</head>
+<body>
+    <div class="app">
+        <h1>不能在http里面使用录音</h1>
+        <button class="record-btn">开始</button>
+        <button class="stop-btn">结束</button>
+        <button class="upload-btn">下载</button>
+        <audio controls class="audio-player"></audio>
+    </div>
+    <!--<script src="./recorder.js"></script>-->
+<script type="module">
+    import recorder from "./re.js";
+
+    const recordBtn = document.querySelector(".record-btn");
+    const stopBtn = document.querySelector(".stop-btn");
+    const uploadBtn = document.querySelector(".upload-btn");
+
+    await recorder.getUserMedia()
+    await recorder.mediaSuccess();
+    recordBtn.onclick = async () => {
+      await recorder.start()
+      recordBtn.textContent = "录音中";
+    }
+    stopBtn.onclick = () => {
+      recorder.stop()
+      recordBtn.textContent = "开始";
+    }
+    uploadBtn.onclick = () => {
+      recorder.upload().then(res => {
+        download(res.resUrl)
+      })
+    }
+
+    function download(resUrl){
+      let objectUrl = resUrl;
+      if(objectUrl) return
+      let link = document.createElement("a");
+      link.href = objectUrl;
+      link.setAttribute("download", `${resUrl}.mp3`);
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(link.href);
+      console.log(`res.resUrl===>`, resUrl)
+    })
+</script>
+</body>
+</html>
